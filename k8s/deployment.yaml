@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: coldchain-telemetry-service
+  namespace: coldchain
+  labels:
+    app: coldchain-telemetry-service
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: coldchain-telemetry-service
+  template:
+    metadata:
+      labels:
+        app: coldchain-telemetry-service
+    spec:
+      containers:
+        - name: coldchain-telemetry-service
+          # Publicly published image on Docker Hub (see report section 2)
+          image: docker.io/indhus/coldchain-telemetry-service-cia1:1.0.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5000
+              name: http
+          envFrom:
+            - configMapRef:
+                name: coldchain-config
+          env:
+            - name: SERVICE_VERSION
+              value: "1.0.0"
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          volumeMounts:
+            - name: coldchain-data
+              mountPath: /data
+      volumes:
+        - name: coldchain-data
+          emptyDir: {}

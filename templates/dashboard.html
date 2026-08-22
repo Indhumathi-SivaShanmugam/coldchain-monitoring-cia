@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cold Chain Monitoring Dashboard</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 24px; background: #f5f7fa; color: #1a1a1a; }
+  h1 { color: #0b3d91; }
+  table { border-collapse: collapse; width: 100%; background: white; }
+  th, td { border: 1px solid #ddd; padding: 8px; font-size: 13px; }
+  th { background: #0b3d91; color: white; text-align: left; }
+  tr.alert { background: #ffe0e0; }
+  .badge { padding: 2px 8px; border-radius: 4px; font-size: 12px; }
+  .ok { background: #d4f5d4; }
+  .bad { background: #ffb3b3; }
+  .meta { color: #555; margin-bottom: 16px; }
+</style>
+</head>
+<body>
+  <h1>&#10052;&#65039; Smart Cold Chain Monitoring Dashboard</h1>
+  <p class="meta">Service version: {{ version }} | Safe range: {{ temp_min }}&deg;C - {{ temp_max }}&deg;C</p>
+  <table>
+    <tr>
+      <th>Device</th><th>Shipment</th><th>Temp (C)</th><th>Humidity (%)</th>
+      <th>Lat</th><th>Lon</th><th>Door</th><th>Recorded At</th><th>Status</th>
+    </tr>
+    {% for r in rows %}
+    <tr class="{{ 'alert' if r['alert_flag'] else '' }}">
+      <td>{{ r['device_id'] }}</td>
+      <td>{{ r['shipment_id'] or '-' }}</td>
+      <td>{{ r['temperature_c'] }}</td>
+      <td>{{ r['humidity_pct'] }}</td>
+      <td>{{ r['lat'] }}</td>
+      <td>{{ r['lon'] }}</td>
+      <td>{{ 'OPEN' if r['door_open'] else 'closed' }}</td>
+      <td>{{ r['recorded_at'] }}</td>
+      <td><span class="badge {{ 'bad' if r['alert_flag'] else 'ok' }}">
+        {{ 'ALERT' if r['alert_flag'] else 'OK' }}</span></td>
+    </tr>
+    {% endfor %}
+  </table>
+</body>
+</html>

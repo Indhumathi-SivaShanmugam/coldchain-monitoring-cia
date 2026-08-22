@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: coldchain-telemetry-svc
+  namespace: coldchain
+  labels:
+    app: coldchain-telemetry-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: coldchain-telemetry-service
+  ports:
+    - name: http
+      port: 80
+      targetPort: 5000
+      protocol: TCP

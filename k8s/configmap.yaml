@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: coldchain-config
+  namespace: coldchain
+data:
+  TEMP_MIN_C: "2.0"
+  TEMP_MAX_C: "8.0"
+  HUMIDITY_MAX_PCT: "80.0"
+  DB_PATH: "/data/coldchain.db"
